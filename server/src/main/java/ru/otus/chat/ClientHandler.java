@@ -69,6 +69,21 @@ public class ClientHandler {
                             sendMsg("/exitok");
                             break;
                         }
+                        if (message.contains("/kick")) {
+                            final String[] msgParts = message.split(" ", 2);
+                            if (msgParts.length < 2 || msgParts[1].isBlank()) {
+                                sendMsg("/kick_err unsupported message format");
+                                continue;
+                            }
+                            final var userName = msgParts[1];
+                            final var authProvider = server.getAuthenticatedProvider();
+                            boolean isAdmin = authProvider.isAdmin(this);
+                            if (isAdmin) {
+                                sendMsg("/kick_ok " + userName);
+                            } else {
+                                sendMsg("/kick_err");
+                            }
+                        }
 
                     } else {
                         server.broadcastMessage(username + ": " + message);

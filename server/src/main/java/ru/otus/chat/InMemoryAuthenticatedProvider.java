@@ -23,11 +23,11 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
 
     private class Role {
         private String login;
-        private RoleType role;
+        private RoleType roleType;
 
         public Role(String login, RoleType role) {
             this.login = login;
-            this.role = role;
+            this.roleType = role;
         }
     }
 
@@ -60,6 +60,15 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
             if (user.login.equals(login) && user.password.equals(password)) {
                 return user.username;
             }
+        }
+        return null;
+    }
+
+
+    private User getUserByUserName(String userName) {
+        for (User user : users) {
+            if (user.username.equals(userName))
+                return user;
         }
         return null;
     }
@@ -120,5 +129,19 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
         server.subscribe(clientHandler);
         clientHandler.sendMsg("/regok " + username);
         return true;
+    }
+
+    @Override
+    public boolean isAdmin(ClientHandler clientHandler) {
+        User user = getUserByUserName(clientHandler.getUsername());
+        if (user == null) {
+            return false;
+        }
+        for (Role role : roles) {
+            if (role.login.equals(user.login) && role.roleType == RoleType.ADMIN) {
+                return true;
+            }
+        }
+        return false;
     }
 }
