@@ -178,7 +178,6 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
     }
 
 
-
     @Override
     public boolean kick(String userName) {
         User user = getUserByUserName(userName);
@@ -203,7 +202,7 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
             return false;
         }
         Restriction restriction = getRestrictionByLogin(user.login);
-        if(restriction == null){
+        if (restriction == null) {
             throw new RuntimeException(String.format("Restriction for user: %s not found", userName));
         }
         return restriction.isKicked;
