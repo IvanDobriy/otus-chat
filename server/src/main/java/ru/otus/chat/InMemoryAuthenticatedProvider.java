@@ -16,15 +16,38 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
         }
     }
 
+    private enum RoleType {
+        USER,
+        ADMIN
+    }
+
+    private class Role {
+        private String login;
+        private RoleType role;
+
+        public Role(String login, RoleType role) {
+            this.login = login;
+            this.role = role;
+        }
+    }
+
     private Server server;
     private List<User> users;
+    private List<Role> roles;
 
     public InMemoryAuthenticatedProvider(Server server) {
         this.server = server;
         this.users = new CopyOnWriteArrayList<>();
+        this.users.add(new User("admin", "123", "admin"));
         this.users.add(new User("qwe", "qwe", "qwe1"));
         this.users.add(new User("asd", "asd", "asd1"));
         this.users.add(new User("zxc", "zxc", "zxc1"));
+
+        this.roles = new CopyOnWriteArrayList<>();
+        roles.add(new Role("admin", RoleType.ADMIN));
+        roles.add(new Role("qwe", RoleType.USER));
+        roles.add(new Role("asd", RoleType.USER));
+        roles.add(new Role("zxc", RoleType.USER));
     }
 
     @Override
@@ -92,6 +115,7 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
             return false;
         }
         users.add(new User(login, password, username));
+        roles.add(new Role(login, RoleType.USER));
         clientHandler.setUsername(username);
         server.subscribe(clientHandler);
         clientHandler.sendMsg("/regok " + username);
