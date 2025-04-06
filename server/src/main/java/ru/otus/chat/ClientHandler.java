@@ -40,7 +40,7 @@ public class ClientHandler {
                             String msg = messageParts[2];
                             ClientHandler clientHandler = server.findClientByUserName(userName);
                             if (clientHandler == null) {
-                                sendMsg(String.format("Current client: %s not fond", userName));
+                                sendMsg(String.format("client with user name: '%s' not fond", userName));
                                 continue;
                             }
                             clientHandler.sendMsg(this.username + ": " + msg);
