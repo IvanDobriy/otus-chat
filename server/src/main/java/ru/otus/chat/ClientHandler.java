@@ -43,7 +43,7 @@ public class ClientHandler {
                                 sendMsg(String.format("Current client: %s not fond", userName));
                                 continue;
                             }
-                            clientHandler.sendMsg(msg);
+                            clientHandler.sendMsg(userName + ": " + msg);
                         }
                         if (message.equals("/exit")) {
                             sendMsg("/exitok");
