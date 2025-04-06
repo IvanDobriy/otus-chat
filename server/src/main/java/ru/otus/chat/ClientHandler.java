@@ -79,13 +79,20 @@ public class ClientHandler {
                             final var authProvider = server.getAuthenticatedProvider();
                             boolean isAdmin = authProvider.isAdmin(this);
                             if (isAdmin) {
-                                sendMsg("/kick_ok " + userName);
+                                if(authProvider.kick(userName)){
+                                    sendMsg("/kick_ok " + userName);
+                                }else {
+                                    sendMsg("/kick_err can`t kick current user");
+                                }
                             } else {
-                                sendMsg("/kick_err");
+                                sendMsg("/kick_err only admin can kick user");
                             }
                         }
-
                     } else {
+                        if(server.getAuthenticatedProvider().isKicked(this.username)){
+                            sendMsg("Current user is kicked");
+                            continue;
+                        }
                         server.broadcastMessage(username + ": " + message);
                     }
                 }

@@ -31,9 +31,21 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
         }
     }
 
+    private class Restriction {
+        private String login;
+        private boolean isKicked;
+
+        public Restriction(String login, boolean isKicked) {
+            this.isKicked = isKicked;
+            this.login = login;
+        }
+    }
+
     private Server server;
     private List<User> users;
     private List<Role> roles;
+    private List<Restriction> restrictions;
+
 
     public InMemoryAuthenticatedProvider(Server server) {
         this.server = server;
@@ -48,6 +60,12 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
         roles.add(new Role("qwe", RoleType.USER));
         roles.add(new Role("asd", RoleType.USER));
         roles.add(new Role("zxc", RoleType.USER));
+
+        this.restrictions = new CopyOnWriteArrayList<>();
+        this.restrictions.add(new Restriction("admin", false));
+        this.restrictions.add(new Restriction("qwe", false));
+        this.restrictions.add(new Restriction("asd", false));
+        this.restrictions.add(new Restriction("zxc", false));
     }
 
     @Override
@@ -59,6 +77,15 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
         for (User user : users) {
             if (user.login.equals(login) && user.password.equals(password)) {
                 return user.username;
+            }
+        }
+        return null;
+    }
+
+    private Restriction getRestrictionByLogin(String login) {
+        for (Restriction restriction : restrictions) {
+            if (login.equals(restriction.login)) {
+                return restriction;
             }
         }
         return null;
@@ -125,10 +152,20 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
         }
         users.add(new User(login, password, username));
         roles.add(new Role(login, RoleType.USER));
+        restrictions.add(new Restriction(login, false));
         clientHandler.setUsername(username);
         server.subscribe(clientHandler);
         clientHandler.sendMsg("/regok " + username);
         return true;
+    }
+
+    private boolean isAdmin(String login) {
+        for (Role role : roles) {
+            if (role.login.equals(login) && role.roleType == RoleType.ADMIN) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -137,11 +174,38 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
         if (user == null) {
             return false;
         }
-        for (Role role : roles) {
-            if (role.login.equals(user.login) && role.roleType == RoleType.ADMIN) {
-                return true;
-            }
+        return isAdmin(user.login);
+    }
+
+
+
+    @Override
+    public boolean kick(String userName) {
+        User user = getUserByUserName(userName);
+        if (user == null) {
+            return false;
         }
-        return false;
+        if (isAdmin(user.login)) {
+            return false;
+        }
+        Restriction restriction = getRestrictionByLogin(user.login);
+        if (restriction == null) {
+            throw new RuntimeException(String.format("Restriction for user: %s not found", userName));
+        }
+        restriction.isKicked = true;
+        return true;
+    }
+
+    @Override
+    public boolean isKicked(String userName) {
+        User user = getUserByUserName(userName);
+        if (user == null) {
+            return false;
+        }
+        Restriction restriction = getRestrictionByLogin(user.login);
+        if(restriction == null){
+            throw new RuntimeException(String.format("Restriction for user: %s not found", userName));
+        }
+        return restriction.isKicked;
     }
 }

@@ -21,18 +21,15 @@ public class Client {
                         if (message.startsWith("/")) {
                             if (message.equals("/exitok")) {
                                 break;
-                            }
-                            else if (message.startsWith("/authok ")) {
+                            } else if (message.startsWith("/authok ")) {
                                 System.out.println("Удалось успешно войти в чат под " +
-                                        "именем пользователя : "+ message.split(" ")[1]);
-                            }
-                            else if (message.startsWith("/regok ")) {
+                                        "именем пользователя : " + message.split(" ")[1]);
+                            } else if (message.startsWith("/regok ")) {
                                 System.out.println("Удалось успешно зарегистрироваться и войти в чат " +
-                                        "с именем пользователя : "+ message.split(" ")[1]);
-                            }
-                            else if(message.startsWith("/kick_ok")){
+                                        "с именем пользователя : " + message.split(" ")[1]);
+                            } else if (message.startsWith("/kick_ok")) {
                                 System.out.println("Удалось успешно отключить " +
-                                        "пользователя : "+ message.split(" ")[1]);
+                                        "пользователя : " + message.split(" ")[1]);
                             } else if (message.startsWith("/kick_err")) {
                                 System.out.println(message.split(" ", 2)[1]);
                             }
