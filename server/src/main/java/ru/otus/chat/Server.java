@@ -38,6 +38,15 @@ public class Server {
         System.out.println("Клиент " + clientHandler.getUsername() + " отлючился");
     }
 
+    public ClientHandler findClientByUserName(String userName) {
+        for (ClientHandler clientHandler : clients) {
+            if (clientHandler.getUsername().equals(userName)) {
+                return clientHandler;
+            }
+        }
+        return null;
+    }
+
     public void broadcastMessage(String message) {
         for (ClientHandler client : clients) {
             client.sendMsg(message);

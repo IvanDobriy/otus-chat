@@ -30,11 +30,25 @@ public class ClientHandler {
                 while (true) {
                     String message = in.readUTF();
                     if (message.startsWith("/")) {
+                        if (message.startsWith("/w")) {
+                            String[] messageParts = message.split(" ", 3);
+                            if (messageParts.length < 3) {
+                                sendMsg("/w_error unsupported command, use: /w username msg");
+                                continue;
+                            }
+                            String userName = messageParts[1];
+                            String msg = messageParts[2];
+                            ClientHandler clientHandler = server.findClientByUserName(userName);
+                            if (clientHandler == null) {
+                                sendMsg(String.format("Current client: %s not fond", userName));
+                                continue;
+                            }
+                            clientHandler.sendMsg(msg);
+                        }
                         if (message.equals("/exit")) {
                             sendMsg("/exitok");
                             break;
                         }
-
                     } else {
                         server.broadcastMessage(username + ": " + message);
                     }
