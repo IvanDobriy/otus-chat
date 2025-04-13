@@ -2,66 +2,14 @@ package ru.otus.chat.jdbc;
 
 import ru.otus.chat.AuthenticatedProvider;
 import ru.otus.chat.ClientHandler;
-import ru.otus.chat.InMemoryAuthenticatedProvider;
-import ru.otus.chat.Server;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.List;
 
 public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
-    private class User {
-        private String login;
-        private String password;
-        private String username;
+    private final Model model;
 
-        public User(String login, String password, String username) {
-            this.login = login;
-            this.password = password;
-            this.username = username;
-        }
-    }
-
-    private enum RoleType {
-        USER,
-        ADMIN
-    }
-
-    private class Role {
-        private String login;
-        private RoleType roleType;
-
-        public Role(String login, RoleType role) {
-            this.login = login;
-            this.roleType = role;
-        }
-    }
-
-    private class Restriction {
-        private String login;
-        private boolean isKicked;
-
-        public Restriction(String login, boolean isKicked) {
-            this.isKicked = isKicked;
-            this.login = login;
-        }
-    }
-
-    private Server server;
-    private List<User> users;
-    private List<Role> roles;
-    private List<Restriction> restrictions;
-
-
-    private Connection connection;
-
-    JDBCAuthenticatedProvider()  {
-        try{
-            connection = DriverManager.getConnection("jdbc:/postgresql:/localhost:54321/chat");
-        }catch (SQLException e){
-            e.printStackTrace();
-        }
+    JDBCAuthenticatedProvider() {
+        model = new Model("jdbc:/postgresql:/localhost:54321/chat");
     }
 
     @Override
