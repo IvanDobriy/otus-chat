@@ -19,6 +19,13 @@ public class Client {
                     while (true) {
                         String message = in.readUTF();
                         if (message.startsWith("/")) {
+                            if (message.startsWith("/w_error")) {
+                                String[] messageParts = message.split(" ", 2);
+                                if (messageParts.length == 2) {
+                                    System.out.println(messageParts[1]);
+                                }
+                                continue;
+                            }
                             if (message.equals("/exitok")) {
                                 break;
                             } else if (message.startsWith("/authok ")) {

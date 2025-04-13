@@ -69,6 +69,22 @@ public class ClientHandler {
                             sendMsg("/exitok");
                             break;
                         }
+                        if (message.startsWith("/w")) {
+                            String[] messageParts = message.split(" ", 3);
+                            if (messageParts.length < 3) {
+                                sendMsg("/w_error unsupported command, use: /w username msg");
+                                continue;
+                            }
+                            String userName = messageParts[1];
+                            String msg = messageParts[2];
+                            ClientHandler clientHandler = server.findClientByUserName(userName);
+                            if (clientHandler == null) {
+                                sendMsg(String.format("client with user name: '%s' not fond", userName));
+                                continue;
+                            }
+                            clientHandler.sendMsg(this.username + ": " + msg);
+                            continue;
+                        }
                         if (message.contains("/kick")) {
                             final String[] msgParts = message.split(" ", 2);
                             if (msgParts.length < 2 || msgParts[1].isBlank()) {
