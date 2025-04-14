@@ -3,13 +3,14 @@ package ru.otus.chat.jdbc;
 import ru.otus.chat.AuthenticatedProvider;
 import ru.otus.chat.ClientHandler;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
     private final Model model;
 
-    JDBCAuthenticatedProvider() throws SQLException {
-        model = new Model("jdbc:/postgresql:/localhost:54321/chat");
+    JDBCAuthenticatedProvider() throws SQLException, IOException {
+        model = new Model();
     }
 
     @Override
