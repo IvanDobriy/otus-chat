@@ -9,5 +9,5 @@ public class RestrictionQuery {
         Objects.requireNonNull(connection);
         this.connection = connection;
     }
-    
+
 }

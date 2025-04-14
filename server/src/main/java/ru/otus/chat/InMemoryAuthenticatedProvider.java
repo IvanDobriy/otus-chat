@@ -13,27 +13,30 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
     private List<User> users;
     private List<Role> roles;
     private List<Restriction> restrictions;
+    private IdGenerator idGenerator;
 
 
     public InMemoryAuthenticatedProvider(Server server) {
         this.server = server;
+
+        this.idGenerator = new SimpleIdGenerator();
         this.users = new CopyOnWriteArrayList<>();
-        this.users.add(new User("admin", "123", "admin"));
-        this.users.add(new User("qwe", "qwe", "qwe1"));
-        this.users.add(new User("asd", "asd", "asd1"));
-        this.users.add(new User("zxc", "zxc", "zxc1"));
+        this.users.add(new User(idGenerator.getNextId(), "admin", "123", "admin"));
+        this.users.add(new User(idGenerator.getNextId(), "qwe", "qwe", "qwe1"));
+        this.users.add(new User(idGenerator.getNextId(), "asd", "asd", "asd1"));
+        this.users.add(new User(idGenerator.getNextId(), "zxc", "zxc", "zxc1"));
 
         this.roles = new CopyOnWriteArrayList<>();
-        roles.add(new Role("admin", RoleType.ADMIN));
-        roles.add(new Role("qwe", RoleType.USER));
-        roles.add(new Role("asd", RoleType.USER));
-        roles.add(new Role("zxc", RoleType.USER));
+        roles.add(new Role(idGenerator.getNextId(), "admin", RoleType.ADMIN));
+        roles.add(new Role(idGenerator.getNextId(), "qwe", RoleType.USER));
+        roles.add(new Role(idGenerator.getNextId(), "asd", RoleType.USER));
+        roles.add(new Role(idGenerator.getNextId(), "zxc", RoleType.USER));
 
         this.restrictions = new CopyOnWriteArrayList<>();
-        this.restrictions.add(new Restriction("admin", false));
-        this.restrictions.add(new Restriction("qwe", false));
-        this.restrictions.add(new Restriction("asd", false));
-        this.restrictions.add(new Restriction("zxc", false));
+        this.restrictions.add(new Restriction(idGenerator.getNextId(), "admin", false));
+        this.restrictions.add(new Restriction(idGenerator.getNextId(), "qwe", false));
+        this.restrictions.add(new Restriction(idGenerator.getNextId(), "asd", false));
+        this.restrictions.add(new Restriction(idGenerator.getNextId(), "zxc", false));
     }
 
     @Override
@@ -118,9 +121,9 @@ public class InMemoryAuthenticatedProvider implements AuthenticatedProvider {
             clientHandler.sendMsg("Указанное имя пользователя уже занято");
             return false;
         }
-        users.add(new User(login, password, username));
-        roles.add(new Role(login, RoleType.USER));
-        restrictions.add(new Restriction(login, false));
+        users.add(new User(idGenerator.getNextId(), login, password, username));
+        roles.add(new Role(idGenerator.getNextId(), login, RoleType.USER));
+        restrictions.add(new Restriction(idGenerator.getNextId(), login, false));
         clientHandler.setUsername(username);
         server.subscribe(clientHandler);
         clientHandler.sendMsg("/regok " + username);
