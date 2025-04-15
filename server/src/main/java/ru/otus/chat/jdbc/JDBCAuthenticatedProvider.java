@@ -36,7 +36,7 @@ public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
     @Override
     public boolean authenticate(ClientHandler clientHandler, String login, String password) {
         try {
-            final var userQuery = model.getUser();
+            final var userQuery = model.getUserQuery();
             final var users = userQuery.getUserByLogin(login);
             if (users.isEmpty()) {
                 clientHandler.sendMsg("Некорректный логин/пароль");
@@ -63,7 +63,7 @@ public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
                 clientHandler.sendMsg("Логин 3+ символа, пароль 3+ символа, имя пользователя 3+ символа");
                 return false;
             }
-            final var userQuery = model.getUser();
+            final var userQuery = model.getUserQuery();
             final var usersByLogin = userQuery.getUserByLogin(login);
             if (!usersByLogin.isEmpty()) {
                 clientHandler.sendMsg("Указанный логин уже занят");
@@ -75,7 +75,7 @@ public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
                 return false;
             }
             final var user = userQuery.create(idGenerator.getNextId(), login, password, username);
-            final var rolesQuery = model.getRole();
+            final var rolesQuery = model.getRoleQuery();
             rolesQuery.create(idGenerator.getNextId(), user.getId(), RoleType.USER);
             model.save();
             clientHandler.setUsername(user.getUsername());
@@ -90,8 +90,8 @@ public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
     @Override
     public boolean isAdmin(ClientHandler clientHandler) {
         try {
-            final var userQuery = model.getUser();
-            final var rolesQuery = model.getRole();
+            final var userQuery = model.getUserQuery();
+            final var rolesQuery = model.getRoleQuery();
             final var users = userQuery.getUserByName(clientHandler.getUsername());
             if (users.isEmpty()) {
                 return false;
@@ -112,13 +112,13 @@ public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
     @Override
     public boolean kick(String userName) {
         try {
-            final var usersQuery = model.getUser();
+            final var usersQuery = model.getUserQuery();
             final var users = usersQuery.getUserByName(userName);
             if (users.isEmpty()) {
                 return false;
             }
             final var currentUser = users.values().stream().findFirst().get();
-            final var rolesQuery = model.getRole();
+            final var rolesQuery = model.getRoleQuery();
             final var roles = rolesQuery.getByUserId(currentUser.getId());
             if (roles.isEmpty()) {
                 return false;
@@ -127,7 +127,7 @@ public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
             if (isAdmin) {
                 return false;
             }
-            final var restrictionQuery = model.getRestriction();
+            final var restrictionQuery = model.getRestrictionQuery();
             final var restrictions = restrictionQuery.getByUserId(currentUser.getId());
             final var isKicked = restrictions.values().stream().anyMatch(Restriction::isKicked);
             if (isKicked) {
@@ -144,13 +144,13 @@ public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
     @Override
     public boolean isKicked(String userName) {
         try {
-            final var usersQuery = model.getUser();
+            final var usersQuery = model.getUserQuery();
             final var users = usersQuery.getUserByName(userName);
             if (users.isEmpty()) {
                 return false;
             }
             final var currentUser = users.values().stream().findFirst().get();
-            final var restrictionsQuery = model.getRestriction();
+            final var restrictionsQuery = model.getRestrictionQuery();
             final var restrictions = restrictionsQuery.getByUserId(currentUser.getId());
             if (restrictions.isEmpty()) {
                 return false;

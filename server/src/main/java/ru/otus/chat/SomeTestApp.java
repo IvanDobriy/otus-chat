@@ -1,6 +1,5 @@
 package ru.otus.chat;
 
-import ru.otus.chat.entities.RestrictionType;
 import ru.otus.chat.jdbc.Model;
 
 import java.io.IOException;
@@ -10,8 +9,8 @@ public class SomeTestApp {
 
     public static void main(String[] args) throws IOException, SQLException {
         final var model = new Model();
-        final var userQuery = model.getUser();
-        final var restrictionQuery = model.getRestriction();
+        final var userQuery = model.getUserQuery();
+        final var restrictionQuery = model.getRestrictionQuery();
         final var result = userQuery.getUserByLogin("admin");
         final var restriction = restrictionQuery.getByUserId(1L);
         final var a = restriction;

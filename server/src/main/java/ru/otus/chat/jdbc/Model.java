@@ -13,9 +13,9 @@ import java.sql.SQLException;
 public class Model {
     private final Connection connection;
 
-    private final RestrictionQuery restriction;
-    private final RoleQuery role;
-    private final UserQuery user;
+    private final RestrictionQuery restrictionQuery;
+    private final RoleQuery roleQuery;
+    private final UserQuery userQuery;
     private ModelChangeList changeList;
 
     public Model() throws SQLException, IOException {
@@ -24,21 +24,21 @@ public class Model {
         String password = "123";
         connection = DriverManager.getConnection(url, userName, password);
         changeList = new ModelChangeList();
-        restriction = new RestrictionQuery(connection, changeList);
-        role = new RoleQuery(connection, changeList);
-        user = new UserQuery(connection, changeList);
+        restrictionQuery = new RestrictionQuery(connection, changeList);
+        roleQuery = new RoleQuery(connection, changeList);
+        userQuery = new UserQuery(connection, changeList);
     }
 
-    public RestrictionQuery getRestriction() {
-        return restriction;
+    public RestrictionQuery getRestrictionQuery() {
+        return restrictionQuery;
     }
 
-    public RoleQuery getRole() {
-        return role;
+    public RoleQuery getRoleQuery() {
+        return roleQuery;
     }
 
-    public UserQuery getUser() {
-        return user;
+    public UserQuery getUserQuery() {
+        return userQuery;
     }
 
     public void save() throws SQLException {
