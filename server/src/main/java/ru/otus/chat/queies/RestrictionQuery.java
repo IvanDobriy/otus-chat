@@ -19,6 +19,7 @@ public class RestrictionQuery {
     private final Connection connection;
     private final String selectByUserId;
     private final String insertQuery;
+    private final String deleteByIdQuery;
     private final ModelChangeList changeList;
 
 
@@ -29,6 +30,7 @@ public class RestrictionQuery {
         this.connection = connection;
         selectByUserId = Utils.readQuery("entities/restriction/select_restriction_query_by_user_id.sql");
         insertQuery = Utils.readQuery("entities/restriction/insert_restriction_query.sql");
+        deleteByIdQuery = Utils.readQuery("entities/restriction/delete_restriction_by_id_query.sql");
     }
 
     public Map<Long, Restriction> getByUserId(Long userId) throws SQLException {
@@ -50,5 +52,8 @@ public class RestrictionQuery {
         final var restriction = new Restriction(id, null, restrictionType == RestrictionType.IS_KICKED);
         changeList.add(new SQLQuery(insertQuery, QueryType.INSERT, List.of(id, userId, restrictionType.getId())));
         return restriction;
+    }
+    public void deleteById(Long id){
+        changeList.add(new SQLQuery(deleteByIdQuery, QueryType.DELETE, List.of(id)));
     }
 }

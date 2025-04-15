@@ -15,7 +15,8 @@ public class SomeTestApp {
         final var result = userQuery.getUserByLogin("admin");
         final var restriction = restrictionQuery.getByUserId(1L);
         final var a = restriction;
-        restrictionQuery.create(10L, 2L, RestrictionType.IS_KICKED);
+//        restrictionQuery.create(10L, 2L, RestrictionType.IS_KICKED);
+        restrictionQuery.deleteById(10L);
         model.save();
 //        final var roleQuery = model.getRole();
 //        roleQuery.create(10L, 1L, RoleType.USER);
