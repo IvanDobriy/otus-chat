@@ -24,7 +24,7 @@ public class Model {
         String password = "123";
         connection = DriverManager.getConnection(url, userName, password);
         changeList = new ModelChangeList();
-        restriction = new RestrictionQuery(connection);
+        restriction = new RestrictionQuery(connection, changeList);
         role = new RoleQuery(connection, changeList);
         user = new UserQuery(connection, changeList);
     }
@@ -53,6 +53,10 @@ public class Model {
                             ps.setLong(i + 1, (Long) parameter);
                         } else if (parameter instanceof String) {
                             ps.setString(i + 1, (String) parameter);
+                        } else if (parameter instanceof Boolean) {
+                            ps.setBoolean(i + 1, (Boolean) parameter);
+                        }else {
+                            throw new RuntimeException("Unsupported parameter type");
                         }
                     }
                     ps.execute();

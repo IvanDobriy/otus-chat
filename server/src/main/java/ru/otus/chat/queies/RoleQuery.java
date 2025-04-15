@@ -7,8 +7,6 @@ import ru.otus.chat.jdbc.QueryType;
 import ru.otus.chat.jdbc.SQLQuery;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -21,7 +19,6 @@ public class RoleQuery {
     private final String selectQuery;
     private final String insertQuery;
     private final ModelChangeList changeList;
-
 
 
     public RoleQuery(Connection connection, ModelChangeList changeList) throws IOException {
@@ -47,7 +44,7 @@ public class RoleQuery {
         return result;
     }
 
-    public Role create(Long id, Long userId, RoleType roleType){
+    public Role create(Long id, Long userId, RoleType roleType) {
         final var role = new Role(id, null, roleType);
         changeList.add(new SQLQuery(insertQuery, QueryType.INSERT, List.of(id, userId, roleType.getId())));
         return role;
