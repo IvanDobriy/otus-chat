@@ -16,7 +16,7 @@ public class Model {
     private final RestrictionQuery restriction;
     private final RoleQuery role;
     private final UserQuery user;
-    private final ModelChangeList changeList;
+    private ModelChangeList changeList;
 
     public Model() throws SQLException, IOException {
         String url = "jdbc:postgresql://localhost:54321/chat";
@@ -44,7 +44,9 @@ public class Model {
     public void save() throws SQLException {
         try {
             connection.setAutoCommit(false);
-            changeList.forEach((sql) -> {
+            final var handledChangeList = changeList;
+            changeList = new ModelChangeList();
+            handledChangeList.forEach((sql) -> {
                 try (PreparedStatement ps = connection.prepareStatement(sql.getQuery())) {
                     final var parameters = sql.getParameters();
                     for (int i = 0; i < parameters.size(); i++) {
