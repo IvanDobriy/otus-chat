@@ -50,10 +50,12 @@ public class Model {
                     for (int i = 0; i < parameters.size(); i++) {
                         final var parameter = parameters.get(i);
                         if (parameter instanceof Long) {
-                            ps.setLong(i, (Long) parameter);
+                            ps.setLong(i + 1, (Long) parameter);
+                        } else if (parameter instanceof String) {
+                            ps.setString(i + 1, (String) parameter);
                         }
                     }
-
+                    ps.execute();
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }

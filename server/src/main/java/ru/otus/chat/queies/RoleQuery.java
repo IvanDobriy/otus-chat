@@ -3,6 +3,7 @@ package ru.otus.chat.queies;
 import ru.otus.chat.entities.Role;
 import ru.otus.chat.entities.RoleType;
 import ru.otus.chat.jdbc.ModelChangeList;
+import ru.otus.chat.jdbc.QueryType;
 import ru.otus.chat.jdbc.SQLQuery;
 
 import java.io.IOException;
@@ -17,24 +18,30 @@ import java.util.Objects;
 
 public class RoleQuery {
     private final Connection connection;
-    private final String query;
+    private final String selectQuery;
+    private final String insertQuery;
     private final ModelChangeList changeList;
+
+    private String readQuery(String resourcePath) throws IOException {
+        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
+        try (InputStream is = classloader.getResourceAsStream(resourcePath)) {
+            Objects.requireNonNull(is);
+            return new String(is.readAllBytes(), StandardCharsets.UTF_8);
+        }
+    }
 
     public RoleQuery(Connection connection, ModelChangeList changeList) throws IOException {
         Objects.requireNonNull(connection);
         Objects.requireNonNull(connection);
         this.changeList = changeList;
         this.connection = connection;
-        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-        try (InputStream is = classloader.getResourceAsStream("entities/role_query.sql")) {
-            Objects.requireNonNull(is);
-            query = new String(is.readAllBytes(), StandardCharsets.UTF_8);
-        }
+        selectQuery = readQuery("entities/role/select_role_query.sql");
+        insertQuery = readQuery("entities/role/insert_role_query.sql");
     }
 
     public final Map<Long, Role> getByUserId(Long userId) throws SQLException {
         final var result = new HashMap<Long, Role>();
-        try (final var ps = connection.prepareStatement(query)) {
+        try (final var ps = connection.prepareStatement(selectQuery)) {
             ps.setLong(1, userId);
             final var queryResult = ps.executeQuery();
             while (queryResult.next()) {
@@ -46,7 +53,9 @@ public class RoleQuery {
         return result;
     }
 
-    public void create(Role role){
-        changeList.add(new SQLQuery("", List.of(role.getId(), role.getRoleType())));
+    public Role create(Long id, Long userId, RoleType roleType){
+        final var role = new Role(id, null, roleType);
+        changeList.add(new SQLQuery(insertQuery, QueryType.INSERT, List.of(id, userId, roleType.getId())));
+        return role;
     }
 }

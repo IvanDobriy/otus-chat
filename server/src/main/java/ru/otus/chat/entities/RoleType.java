@@ -19,5 +19,9 @@ public enum RoleType {
         }
         throw new RuntimeException(String.format("Unsupported role type id: %d", id));
     }
+
+    public long getId() {
+        return id;
+    }
 }
 

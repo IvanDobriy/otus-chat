@@ -7,7 +7,7 @@ public class SQLQuery {
     private String query;
     private List<Object> parameters;
 
-    public SQLQuery(String query, List<Object> parameters){
+    public SQLQuery(String query, QueryType queryType,  List<Object> parameters){
         Objects.requireNonNull(query);
         Objects.requireNonNull(parameters);
         this.query = query;
