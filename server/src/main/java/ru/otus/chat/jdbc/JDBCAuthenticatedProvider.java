@@ -91,13 +91,13 @@ public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
     public boolean isAdmin(ClientHandler clientHandler) {
         try {
             final var userQuery = model.getUserQuery();
-            final var rolesQuery = model.getRoleQuery();
+            final var roleQuery = model.getRoleQuery();
             final var users = userQuery.getUserByName(clientHandler.getUsername());
             if (users.isEmpty()) {
                 return false;
             }
             final var currentUser = users.values().stream().findFirst().get();
-            final var roles = rolesQuery.getByUserId(currentUser.getId());
+            final var roles = roleQuery.getByUserId(currentUser.getId());
             for (Role role : roles.values()) {
                 if (role.getRoleType() == RoleType.ADMIN) {
                     return true;
@@ -112,14 +112,14 @@ public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
     @Override
     public boolean kick(String userName) {
         try {
-            final var usersQuery = model.getUserQuery();
-            final var users = usersQuery.getUserByName(userName);
+            final var userQuery = model.getUserQuery();
+            final var users = userQuery.getUserByName(userName);
             if (users.isEmpty()) {
                 return false;
             }
             final var currentUser = users.values().stream().findFirst().get();
-            final var rolesQuery = model.getRoleQuery();
-            final var roles = rolesQuery.getByUserId(currentUser.getId());
+            final var roleQuery = model.getRoleQuery();
+            final var roles = roleQuery.getByUserId(currentUser.getId());
             if (roles.isEmpty()) {
                 return false;
             }
@@ -144,14 +144,14 @@ public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
     @Override
     public boolean isKicked(String userName) {
         try {
-            final var usersQuery = model.getUserQuery();
-            final var users = usersQuery.getUserByName(userName);
+            final var userQuery = model.getUserQuery();
+            final var users = userQuery.getUserByName(userName);
             if (users.isEmpty()) {
                 return false;
             }
             final var currentUser = users.values().stream().findFirst().get();
-            final var restrictionsQuery = model.getRestrictionQuery();
-            final var restrictions = restrictionsQuery.getByUserId(currentUser.getId());
+            final var restrictionQuery = model.getRestrictionQuery();
+            final var restrictions = restrictionQuery.getByUserId(currentUser.getId());
             if (restrictions.isEmpty()) {
                 return false;
             }
