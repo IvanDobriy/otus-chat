@@ -30,7 +30,7 @@ public class UserQuery {
         this.changeList = changeList;
         selectByLoginQuery = Utils.readQuery("entities/user/select_user_by_login_query.sql");
         insertQuery = Utils.readQuery("entities/user/insert_user_query.sql");
-        selectByUserNameQuery = Utils.readQuery("entities/user/select_user_by_user_name_query");
+        selectByUserNameQuery = Utils.readQuery("entities/user/select_user_by_user_name_query.sql");
     }
 
     public Map<Long, User> getUserByLogin(String login) throws SQLException {
