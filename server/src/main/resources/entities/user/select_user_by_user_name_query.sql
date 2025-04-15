@@ -1,0 +1,1 @@
+select u.user_id, u.login, u."password", u.user_name from users u where u.user_name = ?
