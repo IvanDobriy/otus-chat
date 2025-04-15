@@ -26,7 +26,7 @@ public class Model {
         changeList = new ModelChangeList();
         restriction = new RestrictionQuery(connection);
         role = new RoleQuery(connection, changeList);
-        user = new UserQuery(connection);
+        user = new UserQuery(connection, changeList);
     }
 
     public RestrictionQuery getRestriction() {
