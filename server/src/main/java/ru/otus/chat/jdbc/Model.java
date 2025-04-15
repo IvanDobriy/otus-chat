@@ -7,6 +7,7 @@ import ru.otus.chat.queies.UserQuery;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class Model {
@@ -15,14 +16,16 @@ public class Model {
     private final RestrictionQuery restriction;
     private final RoleQuery role;
     private final UserQuery user;
+    private final ModelChangeList changeList;
 
     public Model() throws SQLException, IOException {
         String url = "jdbc:postgresql://localhost:54321/chat";
         String userName = "user";
         String password = "123";
         connection = DriverManager.getConnection(url, userName, password);
+        changeList = new ModelChangeList();
         restriction = new RestrictionQuery(connection);
-        role = new RoleQuery(connection);
+        role = new RoleQuery(connection, changeList);
         user = new UserQuery(connection);
     }
 
@@ -37,4 +40,29 @@ public class Model {
     public UserQuery getUser() {
         return user;
     }
+
+    public void save() throws SQLException {
+        try {
+            connection.setAutoCommit(false);
+            changeList.forEach((sql) -> {
+                try (PreparedStatement ps = connection.prepareStatement(sql.getQuery())) {
+                    final var parameters = sql.getParameters();
+                    for (int i = 0; i < parameters.size(); i++) {
+                        final var parameter = parameters.get(i);
+                        if (parameter instanceof Long) {
+                            ps.setLong(i, (Long) parameter);
+                        }
+                    }
+
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+            connection.commit();
+        } finally {
+            connection.setAutoCommit(true);
+        }
+    }
+
+
 }

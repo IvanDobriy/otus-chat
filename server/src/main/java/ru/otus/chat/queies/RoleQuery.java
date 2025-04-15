@@ -2,6 +2,8 @@ package ru.otus.chat.queies;
 
 import ru.otus.chat.entities.Role;
 import ru.otus.chat.entities.RoleType;
+import ru.otus.chat.jdbc.ModelChangeList;
+import ru.otus.chat.jdbc.SQLQuery;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,15 +11,19 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 public class RoleQuery {
     private final Connection connection;
     private final String query;
+    private final ModelChangeList changeList;
 
-    public RoleQuery(Connection connection) throws IOException {
+    public RoleQuery(Connection connection, ModelChangeList changeList) throws IOException {
         Objects.requireNonNull(connection);
+        Objects.requireNonNull(connection);
+        this.changeList = changeList;
         this.connection = connection;
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
         try (InputStream is = classloader.getResourceAsStream("entities/role_query.sql")) {
@@ -38,5 +44,9 @@ public class RoleQuery {
             }
         }
         return result;
+    }
+
+    public void create(Role role){
+        changeList.add(new SQLQuery("", List.of(role.getId(), role.getRoleType())));
     }
 }
