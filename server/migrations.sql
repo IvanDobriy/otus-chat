@@ -53,3 +53,23 @@ CREATE TABLE public.restriction_type (
 	restiction_name varchar(100) NULL,
 	CONSTRAINT restriction_type_pk PRIMARY KEY (restriction_type_id)
 );
+
+
+INSERT INTO public.users
+(user_id, login, "password", user_name)
+VALUES(1, 'admin', '123', 'adminushka');
+
+INSERT INTO public.role_types
+(role_type_id, role_name)
+VALUES(1, 'USER');
+INSERT INTO public.role_types
+(role_type_id, role_name)
+VALUES(2, 'ADMIN');
+
+INSERT INTO public.users_roles
+(users_roles_id, user_id, role_type_id)
+VALUES(1, 1, 2);
+
+INSERT INTO public.restriction_type
+(restriction_type_id, restiction_name)
+VALUES(1, 'IS_KICKED');
