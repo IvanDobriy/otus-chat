@@ -1,6 +1,5 @@
 package ru.otus.chat.queies;
 
-import ru.otus.chat.entities.Role;
 import ru.otus.chat.entities.User;
 import ru.otus.chat.jdbc.ModelChangeList;
 import ru.otus.chat.jdbc.QueryType;
@@ -16,21 +15,28 @@ import java.util.Map;
 import java.util.Objects;
 
 public class UserQuery {
+    private final static String selectByLoginQuery;
+    private final static String selectByUserNameQuery;
+    private final static String insertQuery;
+
+    static {
+        try {
+            selectByLoginQuery = Utils.readQuery("entities/user/select_user_by_login_query.sql");
+            insertQuery = Utils.readQuery("entities/user/insert_user_query.sql");
+            selectByUserNameQuery = Utils.readQuery("entities/user/select_user_by_user_name_query.sql");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private final Connection connection;
-    private final String selectByLoginQuery;
-    private final String selectByUserNameQuery;
-    private final String insertQuery;
     private final ModelChangeList changeList;
 
-
-    public UserQuery(Connection connection, ModelChangeList changeList) throws IOException {
+    public UserQuery(Connection connection, ModelChangeList changeList) {
         Objects.requireNonNull(connection);
         Objects.requireNonNull(changeList);
         this.connection = connection;
         this.changeList = changeList;
-        selectByLoginQuery = Utils.readQuery("entities/user/select_user_by_login_query.sql");
-        insertQuery = Utils.readQuery("entities/user/insert_user_query.sql");
-        selectByUserNameQuery = Utils.readQuery("entities/user/select_user_by_user_name_query.sql");
     }
 
     public Map<Long, User> getUserByLogin(String login) throws SQLException {

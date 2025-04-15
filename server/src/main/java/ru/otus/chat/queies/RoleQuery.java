@@ -16,18 +16,25 @@ import java.util.Objects;
 
 public class RoleQuery {
     private final Connection connection;
-    private final String selectQuery;
-    private final String insertQuery;
+    private static final String selectQuery;
+    private static final String insertQuery;
     private final ModelChangeList changeList;
 
+    static {
+        try {
+            selectQuery = Utils.readQuery("entities/role/select_role_query.sql");
+            insertQuery = Utils.readQuery("entities/role/insert_role_query.sql");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-    public RoleQuery(Connection connection, ModelChangeList changeList) throws IOException {
+    public RoleQuery(Connection connection, ModelChangeList changeList) {
         Objects.requireNonNull(connection);
         Objects.requireNonNull(connection);
         this.changeList = changeList;
         this.connection = connection;
-        selectQuery = Utils.readQuery("entities/role/select_role_query.sql");
-        insertQuery = Utils.readQuery("entities/role/insert_role_query.sql");
+
     }
 
     public final Map<Long, Role> getByUserId(Long userId) throws SQLException {

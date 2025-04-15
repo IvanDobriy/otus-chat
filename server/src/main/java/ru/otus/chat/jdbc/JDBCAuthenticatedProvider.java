@@ -6,26 +6,20 @@ import ru.otus.chat.entities.RestrictionType;
 import ru.otus.chat.entities.Role;
 import ru.otus.chat.entities.RoleType;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Objects;
 
 public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
-    private final Model model;
     private Server server;
     private IdGenerator idGenerator;
+    private ConnectionProvider connectionProvider;
 
 
     public JDBCAuthenticatedProvider(Server server) {
         Objects.requireNonNull(server);
-        try {
-            idGenerator = new SimpleIdGenerator();
-            model = new Model();
-            this.server = server;
-        } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
-        }
-
+        idGenerator = new SimpleIdGenerator();
+        this.server = server;
+        connectionProvider = new ConnectionProvider();
     }
 
     @Override
@@ -36,6 +30,7 @@ public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
     @Override
     public boolean authenticate(ClientHandler clientHandler, String login, String password) {
         try {
+            final var model = new Model(connectionProvider);
             final var userQuery = model.getUserQuery();
             final var users = userQuery.getUserByLogin(login);
             if (users.isEmpty()) {
@@ -63,6 +58,7 @@ public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
                 clientHandler.sendMsg("Логин 3+ символа, пароль 3+ символа, имя пользователя 3+ символа");
                 return false;
             }
+            final var model = new Model(connectionProvider);
             final var userQuery = model.getUserQuery();
             final var usersByLogin = userQuery.getUserByLogin(login);
             if (!usersByLogin.isEmpty()) {
@@ -90,6 +86,7 @@ public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
     @Override
     public boolean isAdmin(ClientHandler clientHandler) {
         try {
+            final var model = new Model(connectionProvider);
             final var userQuery = model.getUserQuery();
             final var roleQuery = model.getRoleQuery();
             final var users = userQuery.getUserByName(clientHandler.getUsername());
@@ -112,6 +109,7 @@ public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
     @Override
     public boolean kick(String userName) {
         try {
+            final var model = new Model(connectionProvider);
             final var userQuery = model.getUserQuery();
             final var users = userQuery.getUserByName(userName);
             if (users.isEmpty()) {
@@ -144,6 +142,7 @@ public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
     @Override
     public boolean isKicked(String userName) {
         try {
+            final var model = new Model(connectionProvider);
             final var userQuery = model.getUserQuery();
             final var users = userQuery.getUserByName(userName);
             if (users.isEmpty()) {

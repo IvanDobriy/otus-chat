@@ -4,9 +4,7 @@ import ru.otus.chat.queies.RestrictionQuery;
 import ru.otus.chat.queies.RoleQuery;
 import ru.otus.chat.queies.UserQuery;
 
-import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
@@ -18,11 +16,8 @@ public class Model {
     private final UserQuery userQuery;
     private ModelChangeList changeList;
 
-    public Model() throws SQLException, IOException {
-        String url = "jdbc:postgresql://localhost:54321/chat";
-        String userName = "user";
-        String password = "123";
-        connection = DriverManager.getConnection(url, userName, password);
+    public Model(ConnectionProvider connectionProvider) throws SQLException {
+        connection = connectionProvider.getConnection();
         changeList = new ModelChangeList();
         restrictionQuery = new RestrictionQuery(connection, changeList);
         roleQuery = new RoleQuery(connection, changeList);
@@ -57,7 +52,7 @@ public class Model {
                             ps.setString(i + 1, (String) parameter);
                         } else if (parameter instanceof Boolean) {
                             ps.setBoolean(i + 1, (Boolean) parameter);
-                        }else {
+                        } else {
                             throw new RuntimeException("Unsupported parameter type");
                         }
                     }

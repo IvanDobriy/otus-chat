@@ -5,14 +5,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class ModelChangeList  implements Iterable<SQLQuery>{
+public class ModelChangeList implements Iterable<SQLQuery> {
     private final List<SQLQuery> changes;
 
-    public ModelChangeList(){
+    public ModelChangeList() {
         changes = new ArrayList<>();
     }
 
-    public void add(SQLQuery sqlQuery){
+    public void add(SQLQuery sqlQuery) {
         changes.add(sqlQuery);
     }
 
@@ -23,6 +23,6 @@ public class ModelChangeList  implements Iterable<SQLQuery>{
 
     @Override
     public void forEach(Consumer<? super SQLQuery> action) {
-       changes.forEach(action);
+        changes.forEach(action);
     }
 }

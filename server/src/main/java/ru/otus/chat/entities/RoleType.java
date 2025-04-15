@@ -10,11 +10,11 @@ public enum RoleType {
         this.id = id;
     }
 
-    public static RoleType getById(long id){
+    public static RoleType getById(long id) {
         if (id == 1L) {
             return USER;
         }
-        if(id == 2L){
+        if (id == 2L) {
             return ADMIN;
         }
         throw new RuntimeException(String.format("Unsupported role type id: %d", id));

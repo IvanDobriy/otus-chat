@@ -9,7 +9,7 @@ public enum RestrictionType {
         this.id = id;
     }
 
-    public static RestrictionType getById(long id){
+    public static RestrictionType getById(long id) {
         if (id == 1L) {
             return IS_KICKED;
         }

@@ -16,21 +16,29 @@ import java.util.Map;
 import java.util.Objects;
 
 public class RestrictionQuery {
+    private final static String selectByUserId;
+    private final static String insertQuery;
+    private final static String deleteByIdQuery;
+
+    static {
+        try {
+            selectByUserId = Utils.readQuery("entities/restriction/select_restriction_query_by_user_id.sql");
+            insertQuery = Utils.readQuery("entities/restriction/insert_restriction_query.sql");
+            deleteByIdQuery = Utils.readQuery("entities/restriction/delete_restriction_by_id_query.sql");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
     private final Connection connection;
-    private final String selectByUserId;
-    private final String insertQuery;
-    private final String deleteByIdQuery;
     private final ModelChangeList changeList;
 
-
-    public RestrictionQuery(Connection connection, ModelChangeList changeList) throws IOException {
+    public RestrictionQuery(Connection connection, ModelChangeList changeList) {
         Objects.requireNonNull(connection);
         Objects.requireNonNull(changeList);
         this.changeList = changeList;
         this.connection = connection;
-        selectByUserId = Utils.readQuery("entities/restriction/select_restriction_query_by_user_id.sql");
-        insertQuery = Utils.readQuery("entities/restriction/insert_restriction_query.sql");
-        deleteByIdQuery = Utils.readQuery("entities/restriction/delete_restriction_by_id_query.sql");
     }
 
     public Map<Long, Restriction> getByUserId(Long userId) throws SQLException {
@@ -48,12 +56,13 @@ public class RestrictionQuery {
         return result;
     }
 
-    public Restriction create(Long id, Long userId, RestrictionType restrictionType){
+    public Restriction create(Long id, Long userId, RestrictionType restrictionType) {
         final var restriction = new Restriction(id, null, restrictionType == RestrictionType.IS_KICKED);
         changeList.add(new SQLQuery(insertQuery, QueryType.INSERT, List.of(id, userId, restrictionType.getId())));
         return restriction;
     }
-    public void deleteById(Long id){
+
+    public void deleteById(Long id) {
         changeList.add(new SQLQuery(deleteByIdQuery, QueryType.DELETE, List.of(id)));
     }
 }
