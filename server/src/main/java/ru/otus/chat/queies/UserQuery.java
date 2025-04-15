@@ -51,7 +51,7 @@ public class UserQuery {
 
     public Map<Long, User> getUserByName(String name) throws SQLException {
         final var result = new HashMap<Long, User>();
-        try (PreparedStatement ps = connection.prepareStatement(selectByLoginQuery)) {
+        try (PreparedStatement ps = connection.prepareStatement(selectByUserNameQuery)) {
             ps.setString(1, name);
             final var rs = ps.executeQuery();
             while (rs.next()) {

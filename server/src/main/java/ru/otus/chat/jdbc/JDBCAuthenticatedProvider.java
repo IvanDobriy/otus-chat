@@ -124,7 +124,7 @@ public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
                 return false;
             }
             final var isAdmin = roles.values().stream().anyMatch(role -> role.getRoleType() == RoleType.ADMIN);
-            if (!isAdmin) {
+            if (isAdmin) {
                 return false;
             }
             final var restrictionQuery = model.getRestriction();
