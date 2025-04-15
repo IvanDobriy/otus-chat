@@ -22,21 +22,15 @@ public class RoleQuery {
     private final String insertQuery;
     private final ModelChangeList changeList;
 
-    private String readQuery(String resourcePath) throws IOException {
-        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-        try (InputStream is = classloader.getResourceAsStream(resourcePath)) {
-            Objects.requireNonNull(is);
-            return new String(is.readAllBytes(), StandardCharsets.UTF_8);
-        }
-    }
+
 
     public RoleQuery(Connection connection, ModelChangeList changeList) throws IOException {
         Objects.requireNonNull(connection);
         Objects.requireNonNull(connection);
         this.changeList = changeList;
         this.connection = connection;
-        selectQuery = readQuery("entities/role/select_role_query.sql");
-        insertQuery = readQuery("entities/role/insert_role_query.sql");
+        selectQuery = Utils.readQuery("entities/role/select_role_query.sql");
+        insertQuery = Utils.readQuery("entities/role/insert_role_query.sql");
     }
 
     public final Map<Long, Role> getByUserId(Long userId) throws SQLException {
