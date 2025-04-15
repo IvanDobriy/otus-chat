@@ -54,6 +54,9 @@ public class Server {
 
     public void broadcastMessage(String message) {
         for (ClientHandler client : clients) {
+            if(authenticatedProvider.isKicked(client.getUsername())){
+                continue;
+            }
             client.sendMsg(message);
         }
     }
