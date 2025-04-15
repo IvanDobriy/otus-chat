@@ -16,11 +16,16 @@ public class JDBCAuthenticatedProvider implements AuthenticatedProvider {
     private IdGenerator idGenerator;
 
 
-    public JDBCAuthenticatedProvider(Server server) throws SQLException, IOException {
+    public JDBCAuthenticatedProvider(Server server) {
         Objects.requireNonNull(server);
-        idGenerator = new SimpleIdGenerator();
-        model = new Model();
-        this.server = server;
+        try {
+            idGenerator = new SimpleIdGenerator();
+            model = new Model();
+            this.server = server;
+        } catch (SQLException | IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     @Override

@@ -1,5 +1,7 @@
 package ru.otus.chat;
 
+import ru.otus.chat.jdbc.JDBCAuthenticatedProvider;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -14,7 +16,7 @@ public class Server {
     public Server(int port) {
         this.port = port;
         clients = new CopyOnWriteArrayList<>();
-        authenticatedProvider = new InMemoryAuthenticatedProvider(this);
+        authenticatedProvider = new JDBCAuthenticatedProvider(this);// new InMemoryAuthenticatedProvider(this);
     }
 
     public void start() {
