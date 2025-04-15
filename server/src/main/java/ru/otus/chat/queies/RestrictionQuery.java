@@ -46,9 +46,9 @@ public class RestrictionQuery {
         return result;
     }
 
-    public Restriction create(Long id, String login, RestrictionType restrictionType){
-        final var restriction = new Restriction(id, login, restrictionType == RestrictionType.IS_KICKED);
-        changeList.add(new SQLQuery(insertQuery, QueryType.INSERT, List.of(id, login, restrictionType.getId())));
+    public Restriction create(Long id, Long userId, RestrictionType restrictionType){
+        final var restriction = new Restriction(id, null, restrictionType == RestrictionType.IS_KICKED);
+        changeList.add(new SQLQuery(insertQuery, QueryType.INSERT, List.of(id, userId, restrictionType.getId())));
         return restriction;
     }
 }
